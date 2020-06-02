@@ -22,23 +22,123 @@ public class MyArrayList<E> {
 	}
 
 	public MyArrayList(int capacity) {
-		this.objs = new Object[capacity];
+		if (checkCapacity(capacity)) {
+			this.objs = new Object[capacity];
+		} else {
+			this.objs = new Object[DEFAULT_CAPACITY];
+		}
 	}
 
-	//方法
+	// 提供外部调用方法
 	/**
 	 * 增加元素
+	 * 
 	 * @param element
 	 * @return
 	 */
 	public boolean add(E element) {
-		if(size == this.objs.length) {
+		if (size == this.objs.length) {
 			expand(); // 扩容
 		}
 		this.objs[size++] = element;
 		return true;
 	}
-	
+
+	/**
+	 * 根据下标获取元素
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public E get(int index) {
+		checkIndex(index); // 检查索引
+		return (E) this.objs[index];
+	}
+
+	/**
+	 * 设置对应下标元素
+	 * 
+	 * @param index
+	 * @param element
+	 */
+	public void set(int index, E element) {
+		checkIndex(index);
+		this.objs[index] = element;
+	}
+
+	/**
+	 * 移除对应元素
+	 * 
+	 * @param element
+	 */
+	public int remove(E element) {
+		for (int i = 0; i < this.size; i++) {
+			if (this.objs[i].equals(element)) {
+				remove(i);
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * 移除对应下标元素
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public E remove(int index) {
+		checkIndex(index); // 检查下标合法性
+		E element = get(index);
+		int moveCount = this.size - 1 - index;
+		if (moveCount > 0) {
+			System.arraycopy(objs, index + 1, objs, index, moveCount); // 利用数组拷贝实现数组移动
+		}
+		this.objs[size - 1] = null;
+		size--;
+		return element;
+	}
+
+	/**
+	 * 返回集合的大小
+	 * 
+	 * @return
+	 */
+	public int size() {
+		return this.size;
+	}
+
+	// 内部方法
+	/**
+	 * 检查容量合法性
+	 * 
+	 * @return
+	 */
+	private boolean checkCapacity(int capacity) {
+		if (capacity < 0) {
+			throw new RuntimeException("容量不合法:" + capacity);
+		}
+		if (capacity == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	/**
+	 * 检查索引合法性
+	 * 
+	 * @param index
+	 * @return
+	 */
+	private boolean checkIndex(int index) {
+		if (index < 0 || index > size - 1) {
+			throw new RuntimeException("不合法的索引:" + index);
+		} else {
+			return true;
+		}
+	}
+
 	/**
 	 * 扩容数组
 	 */
