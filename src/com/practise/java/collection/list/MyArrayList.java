@@ -10,7 +10,7 @@ public class MyArrayList<E> {
 
 	// 成员变量和静态变量
 	/** 存放数组 */
-	private Object[] obj;
+	private Object[] objs;
 	/** 当前List大小 */
 	private int size;
 	/** 默认容量 */
@@ -18,11 +18,11 @@ public class MyArrayList<E> {
 
 	// 构造方法
 	public MyArrayList() {
-		this.obj = new Object[DEFAULT_CAPACITY];
+		this.objs = new Object[DEFAULT_CAPACITY];
 	}
 
 	public MyArrayList(int capacity) {
-		this.obj = new Object[capacity];
+		this.objs = new Object[capacity];
 	}
 
 	//方法
@@ -32,8 +32,21 @@ public class MyArrayList<E> {
 	 * @return
 	 */
 	public boolean add(E element) {
-		this.obj[size++] = element;
+		if(size == this.objs.length) {
+			expand(); // 扩容
+		}
+		this.objs[size++] = element;
 		return true;
+	}
+	
+	/**
+	 * 扩容数组
+	 */
+	private void expand() {
+		Object[] newObjs = new Object[this.objs.length + (this.objs.length >> 1)];
+		System.out.println("扩容后容量" + newObjs.length);
+		System.arraycopy(this.objs, 0, newObjs, 0, this.objs.length); // 拷贝数组
+		this.objs = newObjs;
 	}
 
 	@Override
@@ -41,7 +54,7 @@ public class MyArrayList<E> {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
 		for (int i = 0; i < size; i++) {
-			sb.append(this.obj[i] + ",");
+			sb.append(this.objs[i] + ",");
 		}
 		sb.setCharAt(sb.length() - 1, ']');
 		return sb.toString();
